@@ -30,6 +30,7 @@
                 </div>
                 <button class="btn btn-login" id="submitBtn">Login</button>
                 <a href="pages/signUp.php" class="sign-up-link">Don't Have An Account Yet? Sign Up Here</a>
+                <a href="pages/adminPage/login.php" class="sign-up-link">Login As Admin</a>
             </form>
         </div>
     </body>

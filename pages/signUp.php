@@ -48,6 +48,7 @@
                 <button class="btn-clear" id="btnClear">Clear</button>
             </div>
             <a href="../index.php" class="sign-in-link">Already have an account? Sign In here!</a>
+            <a href="adminPage/signup.php" class="sign-in-link">Sign Up As Admin Here!</a>
         </section>
     </main>
 </body>
