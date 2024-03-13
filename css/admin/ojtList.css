@@ -1,0 +1,9 @@
+.edit-icon{
+    cursor: pointer;
+}
+.delete-icon{
+    cursor: pointer;
+}
+#dtr-pop-up{
+    z-index: 2;
+}
