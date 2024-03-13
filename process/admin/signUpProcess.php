@@ -65,8 +65,19 @@
                 throw new Exception('validate() stmt not prepare well - '
                                     .$conn->errno.'/'.$conn->error);
             }
-            // $stmt->
-            return false;
+            $stmt->bind_param('s',$uname);
+            if(!$stmt->execute()){
+                throw new Exception('validate() stmt not executed - '
+                                    .$conn->errno.'/'.$conn->error);
+            }
+            $result = $stmt->get_result();
+            if($result->num_rows < 0){
+                $stmt->close();
+                return false;
+            }else{
+                $stmt->close();
+                return true;
+            }
         } catch (\Throwable $th) {
             throw $th;
         }
