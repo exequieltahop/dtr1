@@ -25,6 +25,8 @@
                 echo json_encode(['status' => 'Wrong Password!']);
                 break;   
             case 'okay':
+                $_SESSION['hasLogin'] = 1;
+                $_SESSION['role'] = "admin";
                 header('Content-Type:application/json');
                 echo json_encode(['status' => 'Successfully Login!']);
                 break; 
@@ -51,7 +53,7 @@
                 throw new Exception('authenticate() stmt not has error - '
                                     .$conn->errno.'/'.$conn->error);
             }
-            $stmt->bind_param('s', $pass);
+            $stmt->bind_param('s', $uname);
             if(!$stmt->execute()){
                 throw new Exception('authenticate() stmt execution failed - '
                                     .$conn->errno.'/'.$conn->error);

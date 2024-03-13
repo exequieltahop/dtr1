@@ -13,7 +13,7 @@
     <!-- <========== SCRIPT FOR SWEET ALERT ==========> -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body class="bg-dark">
+<body class="bg-light">
     <!-- <========== LOADING ANIMATION ==========> -->
     <div class="loadingio-spinner-spinner-xo3sojksn5j" id="blurLoading">
         <div class="ldio-6lw6slcyjk5">
@@ -33,7 +33,7 @@
     </div>
     <main class="container-fluid vh-100 d-flex justify-content-center align-items-center">
         <!-- <========== FORM SIGN UP ==========> -->
-        <form class="p-4 border rounded w-100 bg-dark overflow-auto" id="form">
+        <form class="p-4 border rounded w-100 bg-dark overflow-auto shadow-lg" id="form">
             <h1 class="text-white text-center">Sign Up As Admin</h1>
             <div class="input-group d-flex flex-column gap-2 w-100">
                 <label for="fullname" class="fw-bold text-white">Full Name</label>
@@ -47,13 +47,13 @@
                 <label for="password" class="fw-bold text-white">Password</label>
                 <input type="password" class="form-control w-100 rounded" id="password">
             </div>
-            <div class="input-group d-flex flex-column gap-2">
-                <label for="hte" class="fw-bold text-white">HTE</label>
-                <input type="text" class="form-control w-100 rounded" id="hte">
-            </div>
             <div class="input-group d-flex gap-2">
                 <input type="checkbox" class="input-check" id="showPassword">
                 <label for="showPassword" class="text-white">Show Password</label>
+            </div>
+            <div class="input-group d-flex flex-column gap-2">
+                <label for="hte" class="fw-bold text-white">HTE</label>
+                <input type="text" class="form-control w-100 rounded" id="hte">
             </div>
             <div class="d-flex mt-2 justify-content-end gap-2 overflow-auto">
                 <button class="btn btn-primary" id="signUpBtn">Sign Up</button>

@@ -1,9 +1,174 @@
+
+#dtr-pop-up{
+    z-index: 2;
+}
+
+/* <========== TABLE OJT LIST ==========> */
 .edit-icon{
     cursor: pointer;
 }
 .delete-icon{
     cursor: pointer;
 }
-#dtr-pop-up{
-    z-index: 2;
+td{
+}
+/* <========== END TABLE OJT LIST ==========> */
+
+/* <========== DTR ==========> */
+
+.table-dtr{
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 1em;
+}
+.tr-bold{
+    font-weight: bold;
+}
+.tr-body .td-body:first-child{
+    font-weight: bold;
+}
+.tr-body .td-body{
+    /* font-weight: bold; */
+    padding: 0.1em;
+}
+.p-wrapper{
+    display: flex;
+    align-items: center;    
+    justify-content: center;
+}
+#month{
+    border: none;
+    background-color: transparent;
+    font-size: 12px;
+    padding-left: 0.5em;
+    font-style: italic;
+    border-bottom: 1px solid black;
+    margin-right: 3rem;
+}
+.year{
+    font-size: 12px;
+    padding-left: 0.5em;
+    font-style: italic;
+}
+#yearExtend{
+    border: none;
+    background-color: transparent;
+    font-size: 11px;
+    padding-left: 0.1em;
+    font-style: italic;
+    border-bottom: 1px solid black;
+}
+#yearExtend:focus{
+    outline: none;
+}
+.emphasize{
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    /* outline: 1px solid red; */
+}
+#name{
+    border: none;
+    background-color: transparent;
+    font-size: 12px;
+    padding-left: 0.1em;
+    font-style: italic;
+    border-bottom: 1px solid black;
+    text-align: center;
+    width: 80%;
+    align-self: center;
+    /* outline: 1px solid red; */
+}
+#name:focus{
+    outline: none;
+}
+.td{
+    padding: 0.1em;
+    white-space: nowa;
+}
+/* official reg and saturdays  */
+.official-hour-arrival-wrapper{
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    font-style: italic;
+    gap: 2em;
+    padding-top: 0.5em;
+    /* outline: 1px solid red; */
+}
+.reg-and-saturdays-wrapper{
+    display: flex;
+    flex-direction: column;
+    /* outline: 1px solid red; */
+}
+.days-input{
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid black;
+}
+.span-input-regular-days-wrapper, 
+.span-input-saturdays-wrapper{
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5em;   
+}
+.days-input:focus{
+    outline: none;
+}
+.span-reg-days, .span-saturdays{
+    white-space: nowrap;
+    font-size: 0.8rem;
+}
+.p-certify{
+    font-style: italic;
+}
+/* .input-and-span-verified-wrapper, .input-span-incharged-wrapper{
+    display: flex;
+} */
+.dtr-footer{
+    display: flex;
+    flex-direction: column;
+}
+.input-span-incharged-wrapper{
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.5em;
+}
+.input-verified, .input-incharge{
+    border: none;
+    border-bottom: 1px solid black;
+    width: 75%;
+    align-self: flex-end;
+    text-align: center;
+}
+.input-verified:focus, .input-incharge:focus{
+    outline: none;
+}
+.span-verified{
+    font-size: 0.8rem;
+    font-style: italic;
+}
+.span-incharge{
+    font-size: 0.8rem;
+    font-style: italic;
+    text-align: center;
+}
+.hr{
+    height: 3px;
+    width: 100%;
+    background-color: black;
+}
+.total-h4-wrapper{
+    display: flex;
+    gap: 0.3em;
+}
+.input-total-hours{
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-bottom: 1px solid black;
+    width: 100%;
+}
+.input-total-hours:focus{
+    outline: none;
 }

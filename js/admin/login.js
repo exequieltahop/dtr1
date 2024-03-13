@@ -96,12 +96,30 @@ const processLogin = () => {
                 if (res.err) {
                     throw new Error(res.err);
                 }
-                if (res.status) {
+                if (res.status == 'Wrong Password!') {
                     Swal.fire({
                         icon: "error",
                         title: "Oops...",
                         text: res.status,
                         footer: ''
+                    });
+                    
+                }
+                if(res.status == 'Invalid Account!'){
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: res.status,
+                        footer: ''
+                    });
+                }
+                if(res.status == 'Successfully Login!'){
+                    Swal.fire({
+                        title: "Good job!",
+                        text: res.status,
+                        icon: "success"
+                    }).then(()=>{
+                        window.location.href = 'home.php';
                     });
                 }
             })

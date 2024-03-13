@@ -16,7 +16,25 @@
         if($uname == '' || $password == '' || $fullname == '' || $hte == ''){
             throw new Exception('General Exception: uname, pass, fullname, or hte json data was empty!');
         }
+
         $unameValidation = validate($uname, $conn);
+
+        if($unameValidation == false){
+            $signUpStatus = signUp($fullname, 
+                                   $uname, 
+                                   $password, 
+                                   $hte, 
+                                   $conn);
+            if($signUpStatus == true){
+                header('Content-Type: application/json');
+                echo json_encode(['status' => 'Successfully Registered Account!']);
+            }else{
+                throw new Exception('Failed To Register Account!');
+            }
+        }else{
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'Username Already Taken!']);
+        }
     } catch (\Throwable $th) {
         header('Content-Type: application/json');
         echo json_encode(['err' => $th->getMessage()]);
@@ -34,6 +52,7 @@
         try {
             $date = new DateTime('now', new DateTimeZone('Asia/Manila'));
             $now = $date->format('Y-m-d H:i:s');
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT, ['cost' => 10]);
             $query = 'INSERT INTO admin_user_account(fullname,
                                                      username,
                                                      password,
@@ -45,8 +64,8 @@
                 throw new Exception('signUp() stmt not prepare well - '
                                     .$conn->errno.'/'.$conn->error);
             }
-            $stmt->bind_param('sssss', $fullname, $uname, $password, $hte, $now);
-            if(!$stmt){
+            $stmt->bind_param('sssss', $fullname, $uname, $hashedPassword, $hte, $now);
+            if(!$stmt->execute()){
                 throw new Exception('signUp() stmt execution failed - '
                                     .$conn->errno.'/'.$conn->error);
             }
@@ -71,7 +90,7 @@
                                     .$conn->errno.'/'.$conn->error);
             }
             $result = $stmt->get_result();
-            if($result->num_rows < 0){
+            if($result->num_rows <= 0){
                 $stmt->close();
                 return false;
             }else{

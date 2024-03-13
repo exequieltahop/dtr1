@@ -1,3 +1,14 @@
+<?php 
+    // <========== SESSION START ==========>
+    session_start();
+    echo '
+        <script>
+            console.log('.json_encode(array_keys($_SESSION)).');
+        </script>
+    ';
+    // session_unset();
+    // session_destroy();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +24,7 @@
     <!-- <========== SCRIPT FOR SWEET ALERT ==========> -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body class="bg-dark">
+<body class="bg-light">
     <!-- <========== LOADING ANIMATION ==========> -->
     <div class="loadingio-spinner-spinner-xo3sojksn5j" id="blurLoading">
         <div class="ldio-6lw6slcyjk5">

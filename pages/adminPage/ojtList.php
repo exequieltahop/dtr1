@@ -27,8 +27,27 @@
 <body class="position-relative bg-light">
     <!-- <==========<========== MODALS ==========>==========> -->
     <!-- <========== DTR-- ==========> -->
-    <section class="container-fluid p-3 position-absolute bg-white" id="dtr-pop-up">
-        
+    <section class="d-none container-fluid p-3 position-absolute bg-white" id="dtr-pop-up">
+        <table class="table-dtr">
+            <tbody class="tbody"> 
+                <!-- tr header -->
+                <tr class="tr-bold">
+                    <td class="td"  rowspan="2">Day</td>
+                    <td class="td" colspan="2">A.M</td>
+                    <td class="td" colspan="2">P.M</td>
+                    <td class="td" colspan="2">Undertime</td>
+                </tr>
+                <tr class="tr-bold">
+                    <td class="td">Arrival</td>
+                    <td class="td">Departure</td>
+                    <td class="td">Arrival</td>
+                    <td class="td">Departure</td>
+                    <td class="td">Hours</td>
+                    <td class="td">Minutes</td>
+                </tr>
+                <!-- the days here -->
+            </tbody>
+        </table>
     </section>
     <!-- <========== HEADER --NAV-- ==========> -->
     <header class="container-fluid nav p-2 bg-dark justify-content-center">
@@ -63,8 +82,8 @@
                             <td class="see-dtr">Exequiel D. Tahop</td>
                             <td>Jan. 15, 2024</td>
                             <td>
-                                <i class="bi bi-pencil-square cursor-pointer edit-icon fs-4 text-success" title="Edit OJT Details"></i>
-                                <i class="bi bi-trash fs-4 delete-icon text-danger" title="Delete OJT"></i>
+                                <i class="bi bi-pencil-square cursor-pointer edit-icon text-success" title="Edit OJT Details"></i>
+                                <i class="bi bi-trash delete-icon text-danger" title="Delete OJT"></i>
                             </td>
                         </tr>
                         <tr>
@@ -72,8 +91,8 @@
                             <td class="see-dtr">Exequiel D. Tahop</td>
                             <td>Jan. 15, 2024</td>
                             <td>
-                                <i class="bi bi-pencil-square cursor-pointer edit-icon fs-4 text-success" title="Edit OJT Details"></i>
-                                <i class="bi bi-trash fs-4 delete-icon text-danger" title="Delete OJT"></i>
+                                <i class="bi bi-pencil-square cursor-pointer edit-icon text-success" title="Edit OJT Details"></i>
+                                <i class="bi bi-trash delete-icon text-danger" title="Delete OJT"></i>
                             </td>
                         </tr>
                         <tr>
@@ -81,8 +100,8 @@
                             <td class="see-dtr">Exequiel D. Tahop</td>
                             <td>Jan. 15, 2024</td>
                             <td>
-                                <i class="bi bi-pencil-square cursor-pointer edit-icon fs-4 text-success" title="Edit OJT Details"></i>
-                                <i class="bi bi-trash fs-4 delete-icon text-danger" title="Delete OJT"></i>
+                                <i class="bi bi-pencil-square cursor-pointer edit-icon text-success" title="Edit OJT Details"></i>
+                                <i class="bi bi-trash delete-icon text-danger" title="Delete OJT"></i>
                             </td>
                         </tr>
                     </tbody>

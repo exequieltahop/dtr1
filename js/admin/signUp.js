@@ -103,13 +103,20 @@ const signUpProcess = () => {
             if(res.err){
                 throw new Error(res.err);
             }
-            if(res.status){
+            if(res.status == 'Username Already Taken!'){
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
                     text: res.status,
                     footer: ''
                 });
+            }
+            if(res.status == 'Successfully Registered Account!'){
+                Swal.fire({
+                    title: "Good job!",
+                    text: res.status,
+                    icon: "success"
+                  });
             }
         })
         .catch(error => {
