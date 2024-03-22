@@ -18,7 +18,10 @@
     <title>OJT Daily Time Record</title>
     <!-- css adn script -->
     <link rel="stylesheet" href="css/time.css">
+    <!-- MAIN SCRIPT -->
     <script src="js/time.js"></script>
+    <!-- <========== SWEET ALERT CDN ==========> -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <main>
@@ -33,10 +36,15 @@
         <!-- time in container -->
         <section class="container">
             <h1 class="time">Loading.....</h1>
-            <!-- button time in -->
+            <!-- <========== BUTTON TIME IN ==========> -->
             <input type="hidden" id="hiddenStatus">
             <button id="btnTime" disable>Time in</button>
             <button id="btnTimeOut" disable>Time out</button>
+            <!-- <========== TOTAL HOURS ==========> -->
+            <div class="container-total-hours">
+                <h1 class="h1-total-hours">Loading...</h1>
+            </div>
+            <!-- <========== END TOTAL HOURS ==========> -->
         </section>
     </main>
 </body>

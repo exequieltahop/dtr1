@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     // timeInChecker();
     // time out
     timeOut();
+    // GET TOTAL HOURS IN THE OJT
+    totalHours();
 });
 // post method
 async function postMethod(url, data, dataType){
@@ -211,3 +213,26 @@ function timeOut() {
         });
     });
 }
+// <========== GET TOTAL HOURS ==========>
+const totalHours = () => {
+    const totalhours = document.querySelector('.h1-total-hours');
+    const url = 'process/getTotalHoursJob.php';
+    getMethod(url)
+    .then(res => {
+        if(res.err){
+            throw new Error(res.err);
+        }
+        if(res.data){
+            totalhours.innerHTML = res.data;        
+        }
+    })
+    .catch(error => {
+        console.log(error);
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: error,
+            footer: ''
+          });
+    });
+}   
