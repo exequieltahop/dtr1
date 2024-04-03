@@ -42,7 +42,7 @@
     <main class="container-fluid p-3 d-flex justify-content-center">
         <!-- <========== FORM IN ADDING OJT SCHEDULE ==========> -->
         <form class="shadow p-3 w-100 border rounded bg-white" id="form">
-            <h2 class="h2">Add OJT Schedule</h1>
+            <h2 class="h2 text-center">Add OJT Schedule</h1>
             <div class="form-group">
                 <label for="studentid">Student ID</label>
                 <input type="text" class="form-control" placeholder="Enter Student ID" id="studentid" name="studentid">

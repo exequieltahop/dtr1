@@ -20,11 +20,23 @@
         // <========== CHECK STUDENT FULLNAME WAS NOT EMPTY ==========>
         if(empty($fullname)){
             header('Content-Type: application/json');
-            echo json_encode(['status' => 'Student ID was not registered yet!']);
-        }
-        else{
-            header('Content-Type: application/json');
-            echo json_encode(['status' => `Fullname was $fullname`]);
+            echo json_encode(['status1' => 'Student ID was not registered yet!']);
+        }else{
+            $status = addSched($studentid, 
+                               $date, 
+                               $timein, 
+                               $timeout, 
+                               $meridiem, 
+                               $fullname, 
+                               $conn);
+            if($status === true){
+                header('Content-Type: application/json');
+                echo json_encode(['status' => 'Successfully Added Schedule']);
+            }else{
+                header('Content-Type: application/json');
+                echo json_encode(['status1' => 'Failed To Add Schedule']);
+            }
+            
         }
     } catch (\Throwable $th) {
         header('Content-Type: application/json');
@@ -58,7 +70,19 @@
                 throw new Exception('addSched() stmt not prepared correctly!/ '
                                     .$conn->errno.'/',$conn->error);
             }
-            
+            if(!$stmt->bind_param('ssssss', $fullname,
+                                            $studentid,
+                                            $date,
+                                            $timein,
+                                            $timeout,
+                                            $meridiem)){
+                throw new Exception('addSched() stmt bind param failed!/ '
+                .$conn->errno.'/',$conn->error);
+            }
+            if(!$stmt->execute()){
+                throw new Exception('addSched() stmt execution failed!/ '
+                .$conn->errno.'/',$conn->error);
+            }
             return true;
         } catch (\Throwable $th) {
             throw $th;

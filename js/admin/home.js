@@ -52,21 +52,60 @@ const post = async (url, data, dataType)=>{
 }
 // <========== ADD OJT SCHEDULE ==========>
 const addOjtSchedule = (data)=>{
+    // <========== VARIABLES ==========>
     const url = '../../process/admin/addOjtSchedule.php';
     const dataType = 'FORMDATA';
-    post(url, data, dataType)
-    .then(res => {
-        if(res.err){
-            throw new Error(res.err);
-        }
-    })
-    .catch(error => {
-        console.error(error);
+    const studentid = document.getElementById('studentid');
+    const date = document.getElementById('date');
+    const timeIn = document.getElementById('timeIn');
+    const timeOut = document.getElementById('timeOut');
+    const meridiem = document.getElementById('meridiem');
+    // <========== CHECK IF THE FORM DATA WAS EMPTY ==========>
+    if(studentid.value == '' ||
+       date.value == '' ||
+       timeIn.value == '' ||
+       timeOut.value == '' ||
+       meridiem.value == ''){
         Swal.fire({
             icon: "error",
             title: "ERROR",
-            text: "FAILED TO ADD!",
+            text: "Don\'t Leave The Important Field Empty!",
             footer: ''
           });
-    });
+    }else{
+        post(url, data, dataType)
+        .then(res => {
+            if(res.err){
+                throw new Error(res.err);
+            }else if(res.status){
+                Swal.fire({
+                    title: "Good job!",
+                    text: res.status,
+                    icon: "success"
+                })
+                .then(()=>{
+                    studentid.value = '';
+                    date.value = '';
+                    timeIn.value = '';
+                    timeOut.value = '';
+                });
+            }else if(res.status1){
+                Swal.fire({
+                    icon: "error",
+                    title: "ERROR",
+                    text: res.status1,
+                    footer: ''
+                  });
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            Swal.fire({
+                icon: "error",
+                title: "ERROR",
+                text: "FAILED TO ADD!",
+                footer: ''
+              });
+        });
+    }
 }
