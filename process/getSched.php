@@ -173,7 +173,7 @@
         try {
             $return = '';
             $newDay = strval($day);
-            $stmt = $conn->prepare('SELECT time_in, time_out FROM time_in_out
+            $stmt = $conn->prepare('SELECT DISTINCT time_in, time_out FROM time_in_out
                                     WHERE MONTH(date) = ?
                                     AND DAY(date) = ?
                                     AND fullname = ?
@@ -228,7 +228,7 @@
         try {
             $return = '';
             $newDay = strval($day);
-            $stmt = $conn->prepare('SELECT time_in, time_out FROM time_in_out
+            $stmt = $conn->prepare('SELECT UNIQUE time_in, time_out FROM time_in_out
                                     WHERE MONTH(date) = ?
                                     AND DAY(date) = ?
                                     AND fullname = ?
@@ -315,7 +315,7 @@
     // GET HTE ADVISER
     function hteAdviser(string $uname, mysqli $conn) : string {
         try {
-            $query = 'SELECT hte_adviser FROM users
+            $query = 'SELECT hte_adivser FROM users
                       WHERE StudentID = ?';
             $stmt = $conn->prepare($query);
             if(!$stmt){

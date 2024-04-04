@@ -22,26 +22,38 @@
             header('Content-Type: application/json');
             echo json_encode(['status1' => 'Student ID was not registered yet!']);
         }else{
-            $status = addSched($studentid, 
-                               $date, 
-                               $timein, 
-                               $timeout, 
-                               $meridiem, 
-                               $fullname, 
-                               $conn);
-            if($status === true){
+            // <========== CHECK IF THE SCHEDULE WAS DUPLICATE ==========>
+            $duplicateChecker = dupSchedChecker($studentid, 
+                                                $date, 
+                                                $meridiem, 
+                                                $conn);
+            if($duplicateChecker === true){
                 header('Content-Type: application/json');
-                echo json_encode(['status' => 'Successfully Added Schedule']);
+                echo json_encode(['status1' => 'Duplicate Schedule!']);
             }else{
-                header('Content-Type: application/json');
-                echo json_encode(['status1' => 'Failed To Add Schedule']);
+                // <========== IF THE SCHEDULE WAS !DUPLICATE ==========>
+                // <========== ADD SCHEDULE ==========>
+                $status = addSched($studentid, 
+                                   $date, 
+                                   $timein, 
+                                   $timeout, 
+                                   $meridiem, 
+                                   $fullname, 
+                                   $conn);
+                if($status === true){// <========== CHECK IF SCHEDULE WAS SUCCESSFULLY ADDED ==========>
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'Successfully Added Schedule']);
+                }else{// <========== CHECK IF SCHEDULE WAS NOT SUCCESSFULLY ADDED ==========>
+                    header('Content-Type: application/json');
+                    echo json_encode(['status1' => 'Failed To Add Schedule']);
+                }
             }
             
         }
-    } catch (\Throwable $th) {
+    } catch (\Throwable $th) {// <========== CATCH ERROR AND EXCEPTION ==========>
         header('Content-Type: application/json');
         echo json_encode(['err' => $th->getMessage()]);
-    } finally{
+    } finally{// <========== FINALLY CLOSE THE CONNECTION FROM THE DATABASE ==========>
         if(isset($conn)){
             $conn->close();
         }
@@ -70,6 +82,7 @@
                 throw new Exception('addSched() stmt not prepared correctly!/ '
                                     .$conn->errno.'/',$conn->error);
             }
+            // <========== CHECK IF STMT BIND PARAM WAS SUCCESSFUL ==========>
             if(!$stmt->bind_param('ssssss', $fullname,
                                             $studentid,
                                             $date,
@@ -79,12 +92,13 @@
                 throw new Exception('addSched() stmt bind param failed!/ '
                 .$conn->errno.'/',$conn->error);
             }
+            // <========== CHECK IF STMT SUCCESSFULLY EXECUTE ==========>
             if(!$stmt->execute()){
                 throw new Exception('addSched() stmt execution failed!/ '
                 .$conn->errno.'/',$conn->error);
             }
             return true;
-        } catch (\Throwable $th) {
+        } catch (\Throwable $th) {// <========== CATCH ERRORS AND EXCEPTIONS ==========>
             throw $th;
         }
     }
@@ -126,6 +140,48 @@
             $stmt->close();
             return $return;
         } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+    // <========== DUPLICATE SCHEDULE CHECKER ==========>
+    function dupSchedChecker(string $studentid, 
+                             string $date, 
+                             string $meridiem, 
+                             mysqli $conn) : bool {
+        try {
+            // <========== QUERY ==========>
+            $query = 'SELECT * FROM time_in_out
+                      WHERE student_id = ?
+                      AND DATE(date) = ?
+                      AND meridiem = ?';
+            // <========== PREPARE QUERY ==========>
+            $stmt = $conn->prepare($query);
+            // <========== CHECK PREPARE QUERY IF CORRRECT ==========>
+            if(!$stmt){
+                throw new Exception('dupSchedChecker() stmt not prepared correctly! - '
+                                    .$conn->errno.'/'.$conn->error);
+            }
+            // <========== BIND PARAM ==========>
+            if(!$stmt->bind_param('sss', $studentid, $date, $meridiem)){
+                throw new Exception('dupSchedChecker() stmt bind_param incorrect! - '
+                                    .$conn->errno.'/'.$conn->error);
+            }
+            // <========== EXECUTE QUERY ==========>
+            if(!$stmt->execute()){
+                throw new Exception('dupSchedChecker() stmt execution failed! - '
+                                    .$conn->errno.'/'.$conn->error);
+            } 
+            // <========== GET RESULT ==========>
+            $result = $stmt->get_result();
+            // <========== CHECK RESULT ROW ==========>
+            if($result->num_rows < 1){
+                $stmt->close();
+                return false;
+            }else{
+                $stmt->close();
+                return true;
+            }
+        } catch (\Throwable $th) {// <========== CATCH ERRORS AND EXCEPTIONS ==========>
             throw $th;
         }
     }

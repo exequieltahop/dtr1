@@ -4,6 +4,7 @@ body{
 }
 /* <========== FORM ==========> */
 #form{
+    display: none;
     max-width: 500px;
 }
 /* <========== LOADER SPINNER ==========> */
@@ -41,6 +42,7 @@ body{
     border-color: #0000 #0000 blue blue;
     animation-direction: reverse;
 }
+
 /* <========== LOADING ANIMATION ==========> */
 @keyframes l14{ 
     100%{transform: rotate(1turn)}

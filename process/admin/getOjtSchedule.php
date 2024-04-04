@@ -1,66 +1,45 @@
 <?php 
+    // <========== SESSION START ==========>
     session_start();
-    include_once '../dbcon/conn.php';
+    // <========== INCLUDE DATABASE CONNECTION ==========>
+    include_once '../../dbcon/conn.php';
+    // <========== MAIN ==========>
     try {
-        if($_SERVER['REQUEST_METHOD'] != 'POST'){
-            throw new Exception('Server Request Method not POST!');
+        // <========== CHECK SERVER REQUEST METHOD IF NOT GET THROW AN EXCEPTION ==========>
+        if($_SERVER['REQUEST_METHOD'] !== 'GET'){
+            throw new Exception('Server Request Method Not GET!');
+        } 
+        
+        // <========== GET STUDENT ID in GET VARIALBLE ==========>
+        $studentid = urldecode($_GET['id']);
+        // <========== GET STUDENT FULLNAME ==========>
+        $studentFullname = studentFullname($studentid, $conn);
+        if($studentFullname == ''){
+            header('Content-Type:application/json');
+            echo json_encode(['data' => '']);
+        }else{
+            $data = getSched($studentFullname, $studentid, $conn);
+            header('Content-Type:application/json');
+            echo json_encode(['data' => $data]);
         }
-        $rawJson = file_get_contents('php://input');
-        $json = json_decode($rawJson, true);
-        $dataz = $json['data'];
-        $data = getSched($_SESSION['full_name'], $_SESSION['studentID'], $dataz, $conn);
 
-        $decimalMonth = [
-            'January'=> '01',
-            'February'=> '02',
-            'March'=> '03',
-            'April'=> '04',
-            'May'=> '05',
-            'June'=> '06',
-            'July'=> '07',
-            'August'=> '08',
-            'September'=> '09',
-            'October'=> '10',
-            'November'=> '11',
-            'December'=> '12',
-        ];
-        // GET THE USER MONTHS
-        $strvalMonth = $decimalMonth[$dataz];
-        // GET TOTAL HOURS
-        $totalHours = getTotalHours($_SESSION['full_name'], 
-                                    $_SESSION['studentID'],
-                                    $strvalMonth,
-                                    $conn);
-        // echo json data
-        header('Content-Type: application/json');
-        echo json_encode(['data'=>$data, 'totalHours'=> $totalHours]);
-    } catch (Exception $th) {
-        header('Content-Type: application/json');
-        echo json_encode($th->getMessage());
+    } catch (\Throwable $th) {// <========== CATCH THROWABLE ==========>
+        header('Content-Type:application/json');
+        echo json_encode(['err' => $th->getMessage()]);
+    } finally {// <========== FINALLY IF DBCONNECTION WAS OPEN THEN CLOSE IT ==========>
+        if(isset($conn)){
+            $conn->close();
+        }
     }
-    // get time in and out
-    function getSched(string $fullname, 
-                      string $studentId, 
-                      string $monthString, 
-                      mysqli $conn) : string {
+    // <========== GET OJT DTR DATA ==========>
+    function getSched(string $fullname, string $studentId, mysqli $conn) : string {
         try {
             $return = '';
+            $rawNow = new DateTime('now', new DateTimeZone('Asia/Manila'));
+            $finalizeNow = $rawNow->format('n');
+            $month = intval($finalizeNow);
+            // $month = getMonths($fullname, $studentId, $conn);
             // number of days in each month
-            $decimalMonth = [
-                'January'=> 1,
-                'February'=> 2,
-                'March'=> 3,
-                'April'=> 4,
-                'May'=> 5,
-                'June'=> 6,
-                'July'=> 7,
-                'August'=> 8,
-                'September'=> 9,
-                'October'=> 10,
-                'November'=> 11,
-                'December'=> 12,
-            ];
-            // number of days  in each month
             $numberOfDays = [
                 31,
                 29,
@@ -75,11 +54,12 @@
                 30,
                 31
             ];
-            $daysInTheDTR = getDays($fullname, $studentId, $decimalMonth[$monthString], $conn);//days in array
-            $strvalMonth = strval($decimalMonth[$monthString]);//convert int month to string
+            $newMonth = $month;//month
+            $daysInTheDTR = getDays($fullname, $studentId, $newMonth, $conn);//days in array
+            $strvalMonth = strval($newMonth);//convert int month to string
             // loop the days
             for($i = 0; $i < count($numberOfDays); $i++){
-                if($i == $decimalMonth[$monthString] - 1){
+                if($i == $newMonth - 1){
                     for($j = 1; $j <= $numberOfDays[$i]; $j++){
                         if(in_array($j, $daysInTheDTR)){
                             // am
@@ -145,7 +125,7 @@
                 }
                 return $return;
             }
-        } catch (Exception $th) {
+        } catch (\Exception $th) {
             throw $th;
         }
     }
@@ -192,7 +172,7 @@
         try {
             $return = '';
             $newDay = strval($day);
-            $stmt = $conn->prepare('SELECT time_in, time_out FROM time_in_out
+            $stmt = $conn->prepare('SELECT DISTINCT time_in, time_out FROM time_in_out
                                     WHERE MONTH(date) = ?
                                     AND DAY(date) = ?
                                     AND fullname = ?
@@ -293,96 +273,44 @@
             throw $th;
         }
     }
-    // get total hours
-    // function getTotalHours(string $fullname, 
-    //                        string $studentId,
-    //                        string $month,
-    //                        mysqli $conn) {
-    //     try {
-    //         // $return = [];
-    //         $totalHourPerMeridiem = 0;
-    //         $stmt  = $conn->prepare('SELECT * FROM `time_in_out`
-    //                                  WHERE fullname = ?
-    //                                  AND student_id = ?
-    //                                  AND MONTH(date) = ?
-    //                                  ORDER BY date ASC;');
-    //         if(!$stmt){
-    //             throw new Exception('getTotalHours() stmt not prepare - '.$conn->errno.'/'.$conn->error);
-    //         }
-    //         $stmt->bind_param('sss', $fullname, $studentId, $month);
-    //         $stmt->execute();
-    //         $result = $stmt->get_result();
-    //         if($result->num_rows > 0){
-    //             while($row = $result->fetch_assoc()){
-    //                 if($row['time_out'] != ''){
-    //                     // time in hour, minute string format
-    //                     $timeIn = new DateTime($row['time_in']);
-    //                     $timeInHour = $timeIn->format('H');
-    //                     $timeInMinute = $timeIn->format('i');
-    //                     // time out hour, minute string format
-    //                     $timeOut = new DateTime($row['time_out']);
-    //                     $timeOutHour = $timeOut->format('H');
-    //                     $timeOutMinute = $timeOut->format('i');
-
-    //                     $totalHourPerMeridiem += getHoursPerMeridiem($timeInHour,
-    //                                                                  $timeInMinute,
-    //                                                                  $timeOutHour,
-    //                                                                  $timeOutMinute);
-    //                 }else{
-    //                     $totalHourPerMeridiem += 0;
-    //                 }
-    //             }
-    //         }
-    //         $stmt->close();
-    //         return $totalHourPerMeridiem;
-    //     } catch (Exception $th) {
-    //         throw $th;
-    //     }
-    // }
-    // get total hours per meridiem 
-    function getHoursPerMeridiem(string $timeInHour, 
-                                 string $timeInMinute, 
-                                 string $timeOutHour,
-                                 string $timeOutMinute) : float {
-        $intTimeIn = floatval($timeInHour.'.'.$timeInMinute);
-        $finalTimeOut = floatval($timeOutHour.'.'.$timeOutMinute);
-        return round($finalTimeOut - $intTimeIn, 2);
-    }
-    // TOTAL HOURS 
-    function getTotalHours(string $fullname, 
-                           string $studentId,
-                           string $month,
-                           mysqli $conn) {
+    // <========== GET FULLNAME OF THE OJT ==========>
+    function studentFullname(string $studentid, mysqli $conn) : string{
         try {
-            $intvalMonth = $month;
             $return = '';
-            $stmt  = $conn->prepare('SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(time_out, time_in)))) AS totalHours
-                                     FROM time_in_out
-                                     WHERE student_id = ?
-                                     AND month(date) = ?
-                                     AND time_in IS NOT NULL
-                                     AND time_out IS NOT NULL');
+            // <========== QUERY ==========>
+            $query = 'SELECT Full_Name FROM users 
+                      WHERE BINARY StudentID = ?';
+            // <========== PREPARED QUERY ==========>
+            $stmt = $conn->prepare($query);
+            // <========== CHECK IF STMT IS CORRECT ==========>
             if(!$stmt){
-                throw new Exception('getTotalHours() stmt not prepare - '.$conn->errno.'/'.$conn->error);
+                throw new Exception('studentFullname() stmt not prepared correctly!/ '
+                                    .$conn->errno.'/',$conn->error);
             }
-            $stmt->bind_param('ss', $studentId, $intvalMonth);
-            $stmt->execute();
+            // <========== CHECK IF STMT PLACEHOLDER IS NOT BINDED CORRECTLY ==========>
+            if(!$stmt->bind_param('s', $studentid)){
+                throw new Exception('studentFullname() stmt placeholder not binded!/ '
+                                    .$conn->errno.'/',$conn->error);
+            }
+            // <========== CHECK IF STMT WAS EXECUTING ==========>
+            if(!$stmt->execute()){
+                throw new Exception('studentFullname() stmt failed to execute!/ '
+                                    .$conn->errno.'/',$conn->error);
+            }
+            // <========== GET RESULT FROM QUERY ==========>
             $result = $stmt->get_result();
-            if($result->num_rows > 0){
-                if($row = $result->fetch_assoc()){
-                    if($row['totalHours'] == NULL){
-                        $return .= '0 Hours';
-                    }else{
-                        $rawHour = str_replace(":", ".",substr($row['totalHours'], 0 , 5));
-                        $return .= $rawHour.' Hours';
-                    }
-                }
-            }else{
-                $return .= '0 Hours';
+            // <========== CHECK IF RESULT ROWS WAS 0, IF 0 THEN RETURN '' ==========>
+            if($result->num_rows < 1){
+                $return .= '';
             }
+             // <========== IF RESULT WAS NOT EMPTY THEN PASS IT TO THE $row VARIABLE THEN RETURN IT ==========>
+            if($row = $result->fetch_assoc()){
+                $return .= $row['Full_Name'];
+            }
+            // <========== CLOSE STMT AND RETURN THE STRING ==========>
             $stmt->close();
             return $return;
-        } catch (Exception $th) {
+        } catch (\Throwable $th) {
             throw $th;
         }
     }
