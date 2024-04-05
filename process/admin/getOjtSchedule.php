@@ -6,19 +6,19 @@
     // <========== MAIN ==========>
     try {
         // <========== CHECK SERVER REQUEST METHOD IF NOT GET THROW AN EXCEPTION ==========>
-        if($_SERVER['REQUEST_METHOD'] !== 'GET'){
-            throw new Exception('Server Request Method Not GET!');
+        if($_SERVER['REQUEST_METHOD'] !== 'POST'){
+            throw new Exception('Server Request Method Not POST!');
         } 
         
-        // <========== GET STUDENT ID in GET VARIALBLE ==========>
-        $studentid = urldecode($_GET['id']);
+        // <========== GET STUDENT ID ==========>
+        $studentid = json_decode(file_get_contents('php://input'), true);
         // <========== GET STUDENT FULLNAME ==========>
-        $studentFullname = studentFullname($studentid, $conn);
+        $studentFullname = studentFullname($studentid['studentid'], $conn);
         if($studentFullname == ''){
             header('Content-Type:application/json');
             echo json_encode(['data' => '']);
         }else{
-            $data = getSched($studentFullname, $studentid, $conn);
+            $data = getSched($studentFullname, $studentid['studentid'], $studentid['month'], $conn);
             header('Content-Type:application/json');
             echo json_encode(['data' => $data]);
         }
@@ -32,12 +32,12 @@
         }
     }
     // <========== GET OJT DTR DATA ==========>
-    function getSched(string $fullname, string $studentId, mysqli $conn) : string {
+    function getSched(string $fullname, string $studentId, string $monthz, mysqli $conn) : string {
         try {
             $return = '';
-            $rawNow = new DateTime('now', new DateTimeZone('Asia/Manila'));
-            $finalizeNow = $rawNow->format('n');
-            $month = intval($finalizeNow);
+            // $rawNow = new DateTime('now', new DateTimeZone('Asia/Manila'));
+            // $finalizeNow = $rawNow->format('n');
+            $month = intval($monthz);
             // $month = getMonths($fullname, $studentId, $conn);
             // number of days in each month
             $numberOfDays = [
@@ -75,22 +75,45 @@
                                                    $j, 
                                                    $conn);
                             // concat return value
-                            $return .= '<tr class="tr-body">
-                                            <td class="td-body">'.htmlspecialchars($j,ENT_QUOTES, 'UTF-8').'</td>
-                                            '.$am.'
-                                            '.$pm.'
-                                            <td class="td-body"></td>
-                                            <td class="td-body"></td>
+                            $return .= '<tr>
+                                            <td rowspan="2" class="align-middle fw-bold td-fit border">'.$j.'</td>
+                                            <td class="fw-bold border">AM</td>
+                                            '.$am['data'].'
+                                            <td class="border">
+                                                <i class="bi bi-pencil-square text-primary edit-icon" style="cursor: pointer;" data-record-id="'.htmlspecialchars($am['id'], ENT_QUOTES, 'UTF-8').'"></i>
+                                                <i class="bi bi-archive text-danger delete-icon" style="cursor: pointer;"data-record-id="'.htmlspecialchars($am['id'], ENT_QUOTES, 'UTF-8').'"></i>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold border">PM</td>
+                                            '.$pm['data'].'
+                                            <td class="border">
+                                                <i class="bi bi-pencil-square text-primary edit-icon" style="cursor: pointer;" data-record-id="'.htmlspecialchars($pm['id'], ENT_QUOTES, 'UTF-8').'"></i>
+                                                <i class="bi bi-archive text-danger delete-icon" style="cursor: pointer;" data-record-id="'.htmlspecialchars($pm['id'], ENT_QUOTES, 'UTF-8').'"></i>
+                                            </td>
                                         </tr>';
+                                        
                         }else{
-                            $return .= '<tr class="tr-body">
-                                            <td class="td-body">'.htmlspecialchars($j,ENT_QUOTES, 'UTF-8').'</td>
-                                            <td class="td-body"></td>
-                                            <td class="td-body"></td>
-                                            <td class="td-body"></td>
-                                            <td class="td-body"></td>
-                                            <td class="td-body"></td>
+                            $return .= '<tr>
+                                            <td rowspan="2" class="align-middle td-fit fw-bold border">'.$j.'</td>
+                                            <td class="fw-bold border">AM</td>
+                                            <td class="border"></td>
+                                            <td class="border"></td>
+                                            <td class="border">
+                                                <i class="bi bi-pencil-square text-primary" style="cursor: pointer;"></i>
+                                                <i class="bi bi-archive text-danger" style="cursor: pointer;"></i>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold border">PM</td>
+                                            <td class="border"></td>
+                                            <td class="border"></td>
+                                            <td class="border">
+                                                <i class="bi bi-pencil-square text-primary" style="cursor: pointer;"></i>
+                                                <i class="bi bi-archive text-danger" style="cursor: pointer;"></i>
+                                            </td>
                                         </tr>';
+                                        
                         }
                     }
                 }
@@ -168,11 +191,12 @@
                             string $fullname, 
                             string $studentId, 
                             int $day, 
-                            mysqli $conn) : string {
+                            mysqli $conn) : array {
         try {
             $return = '';
+            $id = '';
             $newDay = strval($day);
-            $stmt = $conn->prepare('SELECT DISTINCT time_in, time_out FROM time_in_out
+            $stmt = $conn->prepare('SELECT id, time_in, time_out FROM time_in_out
                                     WHERE MONTH(date) = ?
                                     AND DAY(date) = ?
                                     AND fullname = ?
@@ -188,8 +212,8 @@
             $stmt->execute();
             $result = $stmt->get_result();
             if($result->num_rows < 1){
-                $return .= '<td class="td-body"></td>
-                            <td class="td-body"></td>
+                $return .= '<td class="border"></td>
+                            <td class="border"></td>
                             ';
             }else{
                 while($row = $result->fetch_assoc()){
@@ -207,13 +231,17 @@
                         $newOut = new DateTime($row['time_out']);
                         $formattedOut = $newOut->format('h:i');
                     }
-                    $return .= '<td class="td-body">'.htmlspecialchars($formattedIn,ENT_QUOTES, 'UTF-8').'</td>
-                                <td class="td-body">'.htmlspecialchars($formattedOut,ENT_QUOTES, 'UTF-8').'</td>
+                    $return .= '<td class="border">'.$formattedIn.'</td>
+                                <td class="border">'.$formattedOut.'</td>
                                 ';
+                    $id = $row['id'];
                 }
             }
             $stmt->close();
-            return $return;
+            return [
+                        'data' => $return,
+                        'id' => $id
+                    ];
         } catch (Exception $th) {
             throw $th;
         }
@@ -223,11 +251,12 @@
                             string $fullname, 
                             string $studentId, 
                             int $day, 
-                            mysqli $conn) : string {
+                            mysqli $conn) : array {
         try {
             $return = '';
+            $id = '';
             $newDay = strval($day);
-            $stmt = $conn->prepare('SELECT time_in, time_out FROM time_in_out
+            $stmt = $conn->prepare('SELECT id, time_in, time_out FROM time_in_out
                                     WHERE MONTH(date) = ?
                                     AND DAY(date) = ?
                                     AND fullname = ?
@@ -243,8 +272,8 @@
             $stmt->execute();
             $result = $stmt->get_result();
             if($result->num_rows < 1){
-                $return .= '<td class="td-body"></td>
-                            <td class="td-body"></td>
+                $return .= '<td class="border"></td>
+                            <td class="border"></td>
                             ';
             }else{
                 while($row = $result->fetch_assoc()){
@@ -262,13 +291,14 @@
                         $newOut = new DateTime($row['time_out']);
                         $formattedOut = $newOut->format('h:i');
                     }
-                    $return .= '<td class="td-body">'.htmlspecialchars($formattedIn,ENT_QUOTES, 'UTF-8').'</td>
-                                <td class="td-body">'.htmlspecialchars($formattedOut,ENT_QUOTES, 'UTF-8').'</td>
+                    $return .= '<td class="border">'.$formattedIn.'</td>
+                                <td class="border">'.$formattedOut.'</td>
                                 ';
+                    $id = $row['id'];
                 }
             }
             $stmt->close();
-            return $return;
+            return ['data' => $return, 'id' => $id];
         } catch (Exception $th) {
             throw $th;
         }

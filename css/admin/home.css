@@ -42,7 +42,20 @@ body{
     border-color: #0000 #0000 blue blue;
     animation-direction: reverse;
 }
-
+.table{
+    border-collapse: collapse;
+}
+.day-th{
+    width: 2rem;
+}
+.meridiem-th{
+    width: 3rem;
+}
+/* <========== EDIT FORM ==========> */
+#Editform{
+    display: none;
+    max-width: 500px;
+}
 /* <========== LOADING ANIMATION ==========> */
 @keyframes l14{ 
     100%{transform: rotate(1turn)}

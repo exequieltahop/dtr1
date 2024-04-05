@@ -1,14 +1,3 @@
-<?php 
-    // <========== SESSION START ==========>
-    session_start();
-    echo '
-        <script>
-            console.log('.json_encode(array_keys($_SESSION)).');
-        </script>
-    ';
-    // session_unset();
-    // session_destroy();
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,15 +35,15 @@
         <!-- <========== FORM LOGIN ==========> -->
         <form class="p-4 border rounded w-100 bg-dark overflow-auto" id="form">
             <h1 class="text-white text-center">Login As Admin</h1>
-            <div class="input-group d-flex flex-column gap-2 w-100">
+            <div class="form-group d-flex flex-column gap-2 w-100">
                 <label for="username" class="fw-bold text-white">Username</label>
-                <input type="text" class="form-control w-100 rounded" id="username">
+                <input type="text" class="form-control w-100 rounded" id="username" autocomplete="username">
             </div>
-            <div class="input-group d-flex flex-column gap-2">
+            <div class="form-group d-flex flex-column gap-2">
                 <label for="password" class="fw-bold text-white">Password</label>
-                <input type="password" class="form-control w-100 rounded" id="password">
+                <input type="password" class="form-control w-100 rounded" id="password" autocomplete="current-password">
             </div>
-            <div class="input-group d-flex gap-2">
+            <div class="form-group d-flex gap-2">
                 <input type="checkbox" class="input-check" id="showPassword">
                 <label for="showPassword" class="text-white">Show Password</label>
             </div>
