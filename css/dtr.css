@@ -13,6 +13,7 @@ body{
 main{
     position: relative;
     padding: 1em;
+    height: 100%;
 }
 .container{
     position: fixed;
@@ -50,8 +51,9 @@ main{
     display: flex;
     flex-direction: column;
     gap: 0.5em;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
+    height: 100%;
     /* outline: 1px solid; */
 }
 /* table dtr */

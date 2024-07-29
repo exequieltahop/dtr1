@@ -228,7 +228,7 @@
         try {
             $return = '';
             $newDay = strval($day);
-            $stmt = $conn->prepare('SELECT UNIQUE time_in, time_out FROM time_in_out
+            $stmt = $conn->prepare('SELECT time_in, time_out FROM time_in_out
                                     WHERE MONTH(date) = ?
                                     AND DAY(date) = ?
                                     AND fullname = ?
@@ -332,7 +332,7 @@
                 throw new Exception('hteAdviser() row result 0');
             }else{
                 if($row = $result->fetch_assoc()){
-                    $return = $row['hte_adviser'];
+                    $return = $row['hte_adivser'];
                 }
             }
             return $return;

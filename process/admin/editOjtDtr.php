@@ -42,7 +42,7 @@
             if($result->num_rows < 1){
                 throw new Exception('getData() $result has not result row!'
                                     .$conn->errno.'/'.$conn->error);
-            }else{
+            }else{  
                 if($row = $result->fetch_assoc()){
                     if($row['time_in'] == ''){
                         $timein = '';
